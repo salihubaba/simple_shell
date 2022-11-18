@@ -12,11 +12,12 @@ int main(int ac __attribute__((unused)), char **av)
 	size_t n = 0;
 	char *buf = NULL;
 	ssize_t get;
-	char *delim = " \n";
 	char *buf_copy = NULL;
 	int num_tokens = 0;
 	char *token;
 	int i;
+	char *delim = " \n";
+	pid_t pid;
 
 	while (1)
 	{
@@ -28,8 +29,6 @@ int main(int ac __attribute__((unused)), char **av)
 		return (-1);
 	}
 		
-
-	// implementing the strtok
 	buf_copy = malloc(sizeof(char) * get);
 	if (buf_copy == NULL)
 	{
@@ -38,7 +37,7 @@ int main(int ac __attribute__((unused)), char **av)
 	}
 
 	strcpy(buf_copy, buf);
-	// CALCULATE THE TOTAL NO OF TOKENS
+
 	token = strtok(buf, delim);
 	while (token != NULL)
 	{
@@ -46,9 +45,9 @@ int main(int ac __attribute__((unused)), char **av)
 		token = strtok(NULL, delim);
 	}
 	num_tokens++;
-	//allocate memory for argv to hold the separated strings
+
 	av = malloc(sizeof(char) * num_tokens);
-	//passing the separated strings into the array
+
 	token = strtok(buf_copy, delim);
 	for (i = 0; token != NULL; i++)
 	{
@@ -57,13 +56,15 @@ int main(int ac __attribute__((unused)), char **av)
 		token = strtok(NULL, delim);
 	}
 	av[i] = NULL;
-	
-	execmd(av);
-	}
 
-	//printf("%s\n", av);
+	pid = fork();
+	if (pid == 0)
+		execmd(av);
+	else
+		wait(NULL);
+	}
 	free(buf);
-	//free(av);
+	/* free(av); */
 	free(buf_copy);
 
 	return (0);

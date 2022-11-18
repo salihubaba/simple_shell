@@ -3,12 +3,14 @@
 void execmd(char **av)
 {
 
-	//char *command = NULL;
+	char *input = NULL, *new_input = NULL;
 
 	if (av)
 	{
+		input = av[0];
+		new_input = get_location(input);
 		
-	if (execve(av[0], av, NULL) == -1)
+	if (execve(new_input, av, NULL) == -1)
 		perror("Error:");
 	
 	}
